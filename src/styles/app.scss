@@ -1,0 +1,820 @@
+// Стили Mini App.
+//
+// Цвета берутся из темы Telegram: скрипт telegram-web-app.js сам выставляет
+// CSS-переменные --tg-theme-bg-color, --tg-theme-button-color и т. д. под тему
+// пользователя (светлую, тёмную, свою). Вне Telegram переменных нет — работают
+// запасные значения --fb-* (мятная палитра, светлая и тёмная).
+
+:root {
+  --fb-bg: #eef4f1;
+  --fb-card: #ffffff;
+  --fb-text: #14211b;
+  --fb-hint: #7d8a84;
+  --fb-accent: #2bb673;
+  --fb-accent-text: #ffffff;
+  --fb-link: #1f9d61;
+  --fb-danger: #e5484d;
+
+  --bg: var(--tg-theme-secondary-bg-color, var(--fb-bg));
+  --card: var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, var(--fb-card)));
+  --text: var(--tg-theme-text-color, var(--fb-text));
+  --hint: var(--tg-theme-hint-color, var(--fb-hint));
+  --accent: var(--tg-theme-button-color, var(--fb-accent));
+  --accent-text: var(--tg-theme-button-text-color, var(--fb-accent-text));
+  --link: var(--tg-theme-accent-text-color, var(--tg-theme-link-color, var(--fb-link)));
+  --danger: var(--tg-theme-destructive-text-color, var(--fb-danger));
+  --line: color-mix(in srgb, var(--text) 10%, transparent);
+  // Мятный акцент бренда — для обложки студии; кнопки — цвета Telegram.
+  --mint: #2bb673;
+  --radius: 16px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  // Отступ снизу: «безопасная зона» телефона (полоска жестов) в Telegram 8.0+ или в браузере.
+  --safe-bottom: max(var(--tg-safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fb-bg: #0f1714;
+    --fb-card: #18231e;
+    --fb-text: #e8f2ed;
+    --fb-hint: #8a9a92;
+    --fb-link: #4fd393;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Onest Variable', -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  // Внутри Telegram страница не должна «пружинить» при прокрутке за край.
+  overscroll-behavior: none;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  user-select: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  // Место под главную кнопку: в Telegram она вне страницы, вне его — наша.
+  padding-bottom: calc(24px + var(--safe-bottom));
+
+  .is-browser & {
+    padding-bottom: calc(96px + var(--safe-bottom));
+  }
+}
+
+.screen {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  animation: enter 0.35s var(--ease);
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 12px 0;
+  }
+}
+
+.screen__head {
+  display: grid;
+  gap: 4px;
+  padding: 4px 4px 0;
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+}
+
+.eyebrow {
+  color: var(--link);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hint {
+  color: var(--hint);
+  font-size: 0.9rem;
+}
+
+.section {
+  display: grid;
+  gap: 10px;
+
+  h2 {
+    padding: 0 4px;
+    color: var(--hint);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+// ─── Шапка демо-режима (вне Telegram) ─────────────────────────────────────────
+
+.demo-bar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 16px;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.demo-bar__logo {
+  font-weight: 800;
+}
+
+.demo-bar__back {
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.demo-bar__note {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mint) 14%, transparent);
+  color: var(--link);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+// ─── Главная кнопка вне Telegram — копия MainButton ───────────────────────────
+
+.main-button-wrap {
+  position: fixed;
+  z-index: 20;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 12px 16px calc(12px + var(--safe-bottom));
+  background: linear-gradient(transparent, var(--bg) 30%);
+}
+
+.main-button {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 528px;
+  height: 52px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 1rem;
+  font-weight: 700;
+  animation: rise 0.3s var(--ease);
+  transition: scale 0.15s var(--ease), opacity 0.2s;
+
+  &:active {
+    scale: 0.98;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+@keyframes rise {
+  from {
+    translate: 0 100%;
+  }
+}
+
+.main-button__spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid color-mix(in srgb, var(--accent-text) 35%, transparent);
+  border-top-color: var(--accent-text);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+// ─── Главная ──────────────────────────────────────────────────────────────────
+
+.studio {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  overflow: hidden;
+  padding: 22px 20px 20px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #2bb673, #1a8f5a 55%, #0f6b47);
+  color: #fff;
+  box-shadow: 0 16px 40px -18px #1a8f5a;
+}
+
+.studio__hello {
+  opacity: 0.85;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.studio__name {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.studio__tagline {
+  opacity: 0.9;
+}
+
+.studio__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+
+  span:first-child {
+    font-weight: 800;
+  }
+}
+
+// Листик: два круга, повёрнутые в форму листа, медленно «дышат».
+.studio__leaf {
+  position: absolute;
+  top: -30px;
+  right: -20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 0 70% 0 70%;
+  background: rgb(255 255 255 / 14%);
+  rotate: 25deg;
+  animation: leaf 6s ease-in-out infinite;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 22px;
+    border-radius: inherit;
+    background: rgb(255 255 255 / 12%);
+  }
+}
+
+@keyframes leaf {
+  50% {
+    rotate: 35deg;
+    scale: 1.05;
+  }
+}
+
+.next-visit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 0;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--card);
+  text-align: left;
+}
+
+.next-visit__body {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+
+  small {
+    color: var(--hint);
+    font-size: 0.8rem;
+  }
+
+  b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.next-visit__all {
+  color: var(--link);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  margin: 0 -16px;
+  padding: 2px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chip {
+  flex: none;
+  height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+
+  &[aria-checked='true'] {
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+}
+
+.services {
+  display: grid;
+  gap: 8px;
+
+  li {
+    animation: enter-up 0.4s var(--ease) both;
+    animation-delay: calc(var(--i) * 40ms);
+  }
+}
+
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+.service {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  text-align: left;
+  transition: scale 0.15s var(--ease);
+
+  &:active {
+    scale: 0.98;
+  }
+}
+
+.service__body {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+
+  b {
+    font-weight: 700;
+  }
+
+  span {
+    color: var(--hint);
+    font-size: 0.88rem;
+  }
+
+  small {
+    color: var(--link);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+}
+
+.service__price {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.link-button {
+  justify-self: center;
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font-weight: 700;
+
+  &--danger {
+    justify-self: start;
+    color: var(--danger);
+  }
+}
+
+// ─── Запись: мастер, день, время ──────────────────────────────────────────────
+
+.masters,
+.days {
+  display: flex;
+  gap: 8px;
+  margin: 0 -16px;
+  padding: 2px 16px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.master,
+.day {
+  display: grid;
+  flex: none;
+  justify-items: center;
+  gap: 4px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background: var(--card);
+  scroll-snap-align: start;
+  transition: border-color 0.2s, scale 0.15s var(--ease);
+
+  &[aria-checked='true'] {
+    border-color: var(--accent);
+  }
+
+  &:active {
+    scale: 0.96;
+  }
+
+  small {
+    color: var(--hint);
+    font-size: 0.75rem;
+  }
+}
+
+.master {
+  width: 92px;
+  padding: 12px 6px 10px;
+
+  b {
+    font-size: 0.9rem;
+  }
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: var(--c);
+  color: #fff;
+  font-size: calc(var(--s) * 0.42);
+  font-weight: 800;
+  flex: none;
+
+  &--any {
+    --s: 44px;
+    --c: color-mix(in srgb, var(--accent) 18%, var(--card));
+
+    font-size: 1.2rem;
+  }
+}
+
+.day {
+  width: 66px;
+  padding: 8px 4px;
+
+  b {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+  }
+}
+
+.times-group {
+  display: grid;
+  gap: 6px;
+
+  .hint {
+    padding: 0 4px;
+    font-size: 0.8rem;
+  }
+}
+
+.times {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 6px;
+}
+
+.time {
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--card);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 0.2s, color 0.2s, scale 0.15s var(--ease);
+
+  &:active {
+    scale: 0.95;
+  }
+
+  &[aria-checked='true'] {
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+
+  &:disabled {
+    background: transparent;
+    color: var(--hint);
+    opacity: 0.45;
+  }
+}
+
+// ─── Подтверждение ────────────────────────────────────────────────────────────
+
+.summary {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.summary__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+
+  & + & {
+    border-top: 1px solid var(--line);
+  }
+
+  div {
+    display: grid;
+  }
+
+  span:not(.avatar, .summary__icon) {
+    color: var(--hint);
+    font-size: 0.88rem;
+  }
+
+  b::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.summary__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.summary__total {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--card));
+  font-weight: 600;
+
+  b {
+    font-size: 1.15rem;
+  }
+}
+
+.field-label {
+  padding: 0 4px;
+  color: var(--hint);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.field {
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  resize: none;
+  outline: none;
+
+  &:focus {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+
+  &::placeholder {
+    color: var(--hint);
+  }
+}
+
+.error {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+// ─── Успех ────────────────────────────────────────────────────────────────────
+
+.done {
+  justify-items: center;
+  align-content: center;
+  min-height: 70vh;
+  text-align: center;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
+}
+
+.done__check svg {
+  width: 96px;
+  height: 96px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  circle {
+    fill: color-mix(in srgb, var(--accent) 14%, transparent);
+    stroke: var(--accent);
+    stroke-width: 2.5;
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    animation: draw 0.6s var(--ease) forwards;
+  }
+
+  path {
+    stroke: var(--accent);
+    stroke-width: 4;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: draw 0.4s 0.45s var(--ease) forwards;
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.done__text {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+// ─── Мои записи ───────────────────────────────────────────────────────────────
+
+.bookings {
+  display: grid;
+  gap: 8px;
+}
+
+.booking {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--card);
+
+  &[data-past] {
+    opacity: 0.7;
+  }
+}
+
+.booking__date {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  min-width: 72px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--card));
+  text-align: center;
+
+  small {
+    color: var(--hint);
+    font-size: 0.72rem;
+    text-transform: capitalize;
+  }
+
+  b {
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  span {
+    margin-top: 2px;
+    color: var(--link);
+    font-weight: 800;
+  }
+}
+
+.booking__body {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+
+  .link-button {
+    padding: 4px 0;
+  }
+}
+
+.booking__master {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--hint);
+  font-size: 0.88rem;
+}
+
+.booking__comment {
+  color: var(--hint);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 32px 16px;
+  border-radius: var(--radius);
+  background: var(--card);
+  text-align: center;
+
+  p {
+    font-size: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
