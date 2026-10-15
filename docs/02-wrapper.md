@@ -117,3 +117,34 @@ await page.addInitScript(() => {
 перезаписал заглушку. Так я проверял, что на каждом экране вызываются нужные
 методы: `MainButton.setText`, `BackButton.show`, `CloudStorage.setItem` и т. д.
 Для ручной проверки в настоящем Telegram — глава 07.
+
+## Ошибки
+
+> **`window.Telegram.WebApp` прямо в компонентах.** В браузере всё ломается, а проверки версии
+> размазаны по экранам. Одна обёртка.
+>
+> **Колбэки CloudStorage в компонентах.** Вложенные колбэки и забытые ошибки. Обёртка возвращает
+> промисы.
+>
+> **Демо-режим «как-нибудь».** Если в браузере кнопок нет, приложение не показать в портфолио и не
+> протестировать. Те же хуки рисуют свои кнопки.
+
+## Попробуйте сами
+
+1. Добавьте в обёртку функцию `openLink(url)`: в Telegram — `webApp.openLink(url)` (версия 6.4+),
+   иначе — `window.open(url, '_blank')`.
+2. Почему `storage.get` в браузере обёрнут в `try/catch`?
+
+<details>
+<summary>Ответы</summary>
+
+1. ```ts
+   export function openLink(url: string) {
+     if (supports('6.4')) webApp!.openLink(url)
+     else window.open(url, '_blank', 'noopener')
+   }
+   ```
+   И описать метод в типах (`src/telegram/types.ts`): `openLink(url: string): void` у `WebApp`.
+2. В приватном режиме или при запрете cookies `localStorage` бросает исключение — приложение
+   должно работать без сохранения, а не падать.
+</details>
